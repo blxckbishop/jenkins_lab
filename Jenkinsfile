@@ -10,7 +10,7 @@ pipeline {
             steps {
                 script {
                     // Проверяем репозиторий на наличие изменений
-                    checkout([$class: 'GitSCM', branches: [[name: '*/prod']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/your-repo/your-repo.git']]])
+                    checkout([$class: 'GitSCM', branches: [[name: '*/prod']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/blxckbishop/jenkins_lab.git']]])
 
                     // Проверяем наличие файла prod.go
                     if (fileExists('prod.go')) {
