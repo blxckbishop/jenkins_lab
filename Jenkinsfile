@@ -1,24 +1,30 @@
 pipeline {
     agent any
 
-    triggers {
-        cron('*/2 * * * *') // Запускать каждые две минуты
-    }
-
     stages {
-        stage('Checkout and Deploy') {
+ 
+
+        stage('Поиск файла prod.go') {
             steps {
                 script {
-                    // Проверяем репозиторий на наличие изменений
-                    checkout([$class: 'GitSCM', branches: [[name: '*/prod']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/blxckbishop/jenkins_lab.git']]])
-
-                    // Проверяем наличие файла prod.go
-                    if (fileExists('prod.go')) {
-                        // Запускаем скрипт deploy.sh
-                        sh 'chmod +x deploy.sh' // Убедитесь, что скрипт имеет права на выполнение
-                        sh './deploy.sh'
+                    def fileExists = fileExists('prod.go')
+                    if (fileExists) {
+                        echo 'Файл prod.go найден'
                     } else {
-                        echo 'File prod.go not found. Skipping deployment.'
+                        error('Файл prod.go не найден. Убедитесь, что файл присутствует локально.')
+                    }
+                }
+            }
+        }
+
+        stage('Развертывание') {
+            steps {
+                script {
+                    if (fileExists('prod.go')) {
+                        echo 'Запуск скрипта развертывания deploy.sh'
+                        sh 'deploy.sh'
+                    } else {
+                        echo 'Файл prod.go не найден. Ничего не будет развернуто.'
                     }
                 }
             }
